@@ -38,3 +38,7 @@ Notes:
 * Once the system is booted, the boot floppy can be removed.
 * root's password is `toor`.
 * Mount the modules floppy to `/lib/modules`; then, use `modprobe` for loading and unloading.
+
+### Kernel compression
+
+This build now uses **LZO** compression for the kernel image. LZO decompresses much faster than the previous LZMA setting at the cost of a slightly larger `bzImage`. Even with LZO the image still fits on the 1.44M boot floppy. If you need the smallest possible image, switch back to LZMA but expect slower boot times.
