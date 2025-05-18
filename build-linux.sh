@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 if [ ! -e ./linux-5.17.2.tar.xz ] ; then
     echo "Fetching Linux..."

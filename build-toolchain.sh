@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 if [ ! -e ./buildroot-2022.02.1.tar.xz ] ; then
     echo "Fetching buildroot..."

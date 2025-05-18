@@ -1,4 +1,12 @@
 #!/bin/bash
+set -euo pipefail
+
+cleanup() {
+    if mountpoint -q /mnt; then
+        sudo umount /mnt
+    fi
+}
+trap cleanup EXIT
 
 echo "Building ./modules/ floppy folder..."
 
