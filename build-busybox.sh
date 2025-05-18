@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 if [ ! -e ./busybox-1.20.0.tar.bz2 ] ; then
     echo "Fetching busybox..."
