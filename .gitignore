@@ -13,3 +13,4 @@ floppy/lib/
 modules.img
 modules/
 preinit/init
+preinit/linux-headers/**/*.cmd
