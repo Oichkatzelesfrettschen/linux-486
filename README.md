@@ -26,7 +26,7 @@ Run the build scripts in this order:
 
 On my machine (Ryzen 1700x, 16GB RAM), building the toolchain takes around ten minutes; building Linux takes around a minute, and the remaining steps take less than a minute each.
 
-After successful execution of all scripts, you should have `floppy.img` (boot image) and `modules.img` (modules). These can be `dd`'d to a 1.44M 3.5" floppy disk.
+After successful execution of all scripts, you should have `floppy.img` (boot image) and `modules.img` (modules). By default these are sized for a 1.44M disk. Pass `720` as the first argument to `build-floppy.sh` and `build-modules.sh` to create 720K images instead.
 
 ## Booting the system
 
@@ -41,4 +41,6 @@ Notes:
 
 ### Kernel compression
 
-This build now uses **LZO** compression for the kernel image. LZO decompresses much faster than the previous LZMA setting at the cost of a slightly larger `bzImage`. Even with LZO the image still fits on the 1.44M boot floppy. If you need the smallest possible image, switch back to LZMA but expect slower boot times.
+This build now uses **LZO** compression for the kernel image. LZO decompresses much faster than the previous LZMA setting but produces a `bzImage` around **1.1&nbsp;MB** with the supplied configuration. This easily fits on a 1.44M floppy but is too large for a 720K disk.
+
+For 720K targets, enable LZMA compression (`CONFIG_KERNEL_LZMA=y`) and disable unnecessary built‑ins so the final image stays under 720K. With only the compression method changed, the kernel is roughly **930&nbsp;KB**. To shrink further, trim built‑ins such as rarely used file systems or drivers and rebuild until `build-linux.sh` reports a size below **720 KB**.
