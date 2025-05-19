@@ -42,6 +42,9 @@ Notes:
 
 ### Kernel compression
 
+This build now uses **LZO** compression for the kernel image. LZO decompresses much faster than the previous LZMA setting but produces a `bzImage` around **1.1&nbsp;MB** with the supplied configuration. This easily fits on a 1.44M floppy but is too large for a 720K disk.
+
+For 720K targets, enable LZMA compression (`CONFIG_KERNEL_LZMA=y`) and disable unnecessary built‑ins so the final image stays under 720K. With only the compression method changed, the kernel is roughly **930&nbsp;KB**. To shrink further, trim built‑ins such as rarely used file systems or drivers and rebuild until `build-linux.sh` reports a size below **720 KB**.
 This build now uses **LZO** compression for the kernel image. LZO decompresses much faster than the previous LZMA setting at the cost of a slightly larger `bzImage`. Even with LZO the image still fits on the 1.44M boot floppy. If you need the smallest possible image, switch back to LZMA but expect slower boot times.
 
 ### 720 KB boot disk

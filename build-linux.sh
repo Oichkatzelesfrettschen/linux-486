@@ -37,5 +37,11 @@ echo "Building Linux..."
 ARCH=x86 CROSS_COMPILE=i486-buildroot-linux-uclibc- make -j8
 
 echo "Calling sudo to copy bzImage to the floppy folder..."
-sudo cp arch/x86/boot/bzImage ../floppy/boot/bzImage
+bzImage_path=arch/x86/boot/bzImage
+size_bytes=$(stat -c%s "$bzImage_path")
+echo "Kernel size: $size_bytes bytes"
+if [ "$size_bytes" -gt 737280 ]; then
+    echo "Warning: bzImage exceeds 720KB. Consider enabling LZMA compression and trimming built-ins."
+fi
+sudo cp "$bzImage_path" ../floppy/boot/bzImage
 
