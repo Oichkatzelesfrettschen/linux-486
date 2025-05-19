@@ -6,6 +6,7 @@ The generated boot floppy disk provides you with a Busybox system that is kept e
 
 A second floppy containing additional kernel modules can also be generated. The boot disk uses ext2 while the modules disk is formatted as FAT12.
 
+
 ## Build requirements
 
 * building tools (make, gcc, linux kernel's requirements, etc.)
@@ -26,7 +27,7 @@ Run the build scripts in this order:
 
 On my machine (Ryzen 1700x, 16GB RAM), building the toolchain takes around ten minutes; building Linux takes around a minute, and the remaining steps take less than a minute each.
 
-After successful execution of all scripts, you should have `floppy.img` (boot image) and `modules.img` (modules). These can be `dd`'d to a 1.44M 3.5" floppy disk.
+After successful execution of all scripts, you should have `floppy.img` (boot image) and `modules.img` (modules). These can be `dd`'d to a 1.44M 3.5" floppy disk. Pass `720` to `build-floppy.sh` if you need a 720K boot disk.
 
 The modules disk is FAT12 formatted and defaults to 1440 KB. You can create a smaller image by passing a size in kilobytes to `build-modules.sh`, for example `./build-modules.sh 720` for a 720 KB disk. Ensure the `modules/` directory fits within the requested size before running the script.
 
@@ -43,4 +44,32 @@ Notes:
 
 ### Kernel compression
 
+This build now uses **LZO** compression for the kernel image. LZO decompresses much faster than the previous LZMA setting at the cost of a slightly larger `bzImage`. Even with LZO the image still fits on the 1.44M boot floppy (or the 720K image generated with `build-floppy.sh 720`). If you need the smallest possible image, switch back to LZMA but expect slower boot times.
+For 720K targets, enable LZMA compression (`CONFIG_KERNEL_LZMA=y`) and disable unnecessary built‑ins so the final image stays under 720K. With only the compression method changed, the kernel is roughly **930&nbsp;KB**. To shrink further, trim built‑ins such as rarely used file systems or drivers and rebuild until `build-linux.sh` reports a size below **720 KB**.
 This build now uses **LZO** compression for the kernel image. LZO decompresses much faster than the previous LZMA setting at the cost of a slightly larger `bzImage`. Even with LZO the image still fits on the 1.44M boot floppy. If you need the smallest possible image, switch back to LZMA but expect slower boot times.
+
+### 720 KB boot disk
+
+If you wish to target a double‑density (720 KB) floppy instead of the normal
+1.44 MB media, adjust the following before running the build scripts:
+
+* In `build-floppy.sh` (and `build-modules.sh` if you still want a modules
+  image) change the `dd` size to `count=720`.
+* Update `floppy/boot/lilo.conf` to use the geometry for 720 KB disks:
+
+  ```
+  sectors=9
+  heads=2
+  cylinders=80
+  ```
+
+The LZO compressed kernel still works, but space is tight. You may need a
+smaller kernel configuration or fewer modules to fit.
+
+Write the resulting images to a 720 KB floppy with:
+
+```bash
+dd if=floppy.img of=/dev/fd0 bs=1k
+```
+
+Use the same command for `modules.img` (if generated).

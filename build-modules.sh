@@ -44,6 +44,7 @@ if [ "$MODULES_SIZE" -gt "$SIZE" ]; then
 fi
 
 dd if=/dev/zero of=modules.img bs=1k count="${SIZE}"
+
 mkfs.vfat -F 12 modules.img
 sudo mount -oloop modules.img /mnt
 sudo cp -R modules/* /mnt/
