@@ -27,6 +27,7 @@ else
 fi
 
 dd if=/dev/zero of=floppy.img bs=1k count=$COUNT
+
 mkfs.ext2 -b 1024 -i 65536 -I 128 -m 0 -r 0 -T floppy -d floppy floppy.img
 
 sudo mount floppy.img /mnt -oloop
@@ -35,7 +36,7 @@ sudo mount devtmpfs /mnt/dev -t devtmpfs
 
 sudo cp "$LILO_CONF" /mnt/boot/lilo.conf
 sudo chown -R root:root /mnt/*
-sudo lilo -v -g -b /dev/loop0 -r /mnt -C /boot/lilo.conf
+sudo lilo -v -g -b /dev/loop0 -r /mnt -C "$lilo_conf"
 
 sudo umount /mnt/dev
 sudo rmdir /mnt/dev
