@@ -27,7 +27,7 @@ Run the build scripts in this order:
 
 On my machine (Ryzen 1700x, 16GB RAM), building the toolchain takes around ten minutes; building Linux takes around a minute, and the remaining steps take less than a minute each.
 
-After successful execution of all scripts, you should have `floppy.img` (boot image) and `modules.img` (modules). These can be `dd`'d to a 1.44M 3.5" floppy disk.
+After successful execution of all scripts, you should have `floppy.img` (boot image) and `modules.img` (modules). By default these are sized for a 1.44M disk. Pass `720` as the first argument to `build-floppy.sh` and `build-modules.sh` to create 720K images instead.
 
 ## Booting the system
 

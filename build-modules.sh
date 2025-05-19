@@ -21,7 +21,9 @@ du -sh ./modules
 
 echo "Creating modules.img..."
 
-dd if=/dev/zero of=modules.img bs=1k count=1440
+size=${1:-1440}
+
+dd if=/dev/zero of=modules.img bs=1k count=$size
 mkfs.vfat -F 12 modules.img
 sudo mount -oloop modules.img /mnt
 sudo cp -R modules/* /mnt/
