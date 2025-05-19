@@ -4,7 +4,7 @@ This repo provides the files necessary to build a modern Linux-based "operating 
 
 The generated boot floppy disk provides you with a Busybox system that is kept entirely in memory. uClibc's shared library files are also loaded into memory, allowing other programs to save on memory (as opposed to using static binaries).
 
-A second floppy containing additional kernel modules can also be generated. Both floppies are ext2 formatted.
+A second floppy containing additional kernel modules can also be generated. The boot disk uses ext2 while the modules disk is formatted as FAT12.
 
 ## Build requirements
 
@@ -27,6 +27,8 @@ Run the build scripts in this order:
 On my machine (Ryzen 1700x, 16GB RAM), building the toolchain takes around ten minutes; building Linux takes around a minute, and the remaining steps take less than a minute each.
 
 After successful execution of all scripts, you should have `floppy.img` (boot image) and `modules.img` (modules). These can be `dd`'d to a 1.44M 3.5" floppy disk.
+
+The modules disk is FAT12 formatted and defaults to 1440 KB. You can create a smaller image by passing a size in kilobytes to `build-modules.sh`, for example `./build-modules.sh 720` for a 720 KB disk. Ensure the `modules/` directory fits within the requested size before running the script.
 
 ## Booting the system
 
