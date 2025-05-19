@@ -4,7 +4,8 @@ This repo provides the files necessary to build a modern Linux-based "operating 
 
 The generated boot floppy disk provides you with a Busybox system that is kept entirely in memory. uClibc's shared library files are also loaded into memory, allowing other programs to save on memory (as opposed to using static binaries).
 
-A second floppy containing additional kernel modules can also be generated. Both floppies are ext2 formatted.
+A second floppy containing additional kernel modules can also be generated.
+The boot floppy uses ext2, while the modules disk is formatted FAT12.
 
 ## Build requirements
 
@@ -44,3 +45,30 @@ Notes:
 This build now uses **LZO** compression for the kernel image. LZO decompresses much faster than the previous LZMA setting but produces a `bzImage` around **1.1&nbsp;MB** with the supplied configuration. This easily fits on a 1.44M floppy but is too large for a 720K disk.
 
 For 720K targets, enable LZMA compression (`CONFIG_KERNEL_LZMA=y`) and disable unnecessary built‑ins so the final image stays under 720K. With only the compression method changed, the kernel is roughly **930&nbsp;KB**. To shrink further, trim built‑ins such as rarely used file systems or drivers and rebuild until `build-linux.sh` reports a size below **720 KB**.
+This build now uses **LZO** compression for the kernel image. LZO decompresses much faster than the previous LZMA setting at the cost of a slightly larger `bzImage`. Even with LZO the image still fits on the 1.44M boot floppy. If you need the smallest possible image, switch back to LZMA but expect slower boot times.
+
+### 720 KB boot disk
+
+If you wish to target a double‑density (720 KB) floppy instead of the normal
+1.44 MB media, adjust the following before running the build scripts:
+
+* In `build-floppy.sh` (and `build-modules.sh` if you still want a modules
+  image) change the `dd` size to `count=720`.
+* Update `floppy/boot/lilo.conf` to use the geometry for 720 KB disks:
+
+  ```
+  sectors=9
+  heads=2
+  cylinders=80
+  ```
+
+The LZO compressed kernel still works, but space is tight. You may need a
+smaller kernel configuration or fewer modules to fit.
+
+Write the resulting images to a 720 KB floppy with:
+
+```bash
+dd if=floppy.img of=/dev/fd0 bs=1k
+```
+
+Use the same command for `modules.img` (if generated).
