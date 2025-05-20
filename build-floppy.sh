@@ -1,6 +1,13 @@
 #!/bin/bash
 set -euo pipefail
 
+# Usage: ./build-floppy.sh [SIZE]
+# SIZE is the image size in kilobytes (defaults to 1440). The size can also be
+# specified with the FLOPPY_SIZE environment variable. Example:
+#   FLOPPY_SIZE=720 ./build-floppy.sh
+
+SIZE=${FLOPPY_SIZE:-${1:-1440}}
+
 cleanup() {
     if mountpoint -q /mnt/dev; then
         sudo umount /mnt/dev
@@ -12,7 +19,11 @@ cleanup() {
 }
 trap cleanup EXIT
 
-dd if=/dev/zero of=floppy.img bs=1k count=1440
+# Create the floppy image. 1440 creates a 1.44MB image while 720 creates a
+# 720KB image.
+
+dd if=/dev/zero of=floppy.img bs=1k count="$SIZE"
+# The -T floppy option tunes parameters for small images
 mkfs.ext2 -b 1024 -i 65536 -I 128 -m 0 -r 0 -T floppy -d floppy floppy.img
 
 sudo mount floppy.img /mnt -oloop
